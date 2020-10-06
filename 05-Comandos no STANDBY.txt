@@ -1,0 +1,38 @@
+Subir:
+=================================================================================
+sqlplus '/ as sysdba'
+startup nomount pfile=/oracle/PRD/920_64/dbs/initPRD.ora
+ALTER DATABASE MOUNT STANDBY DATABASE;
+
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+ou
+recover standby database;
+
+
+Descer:
+=================================================================================
+sqlplus '/ as sysdba'
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+shutdown immediate;
+
+
+Consultas:
+=================================================================================
+select max(trim(name)) name from v$archived_log where applied='YES';
+select name name from v$archived_log where applied='YES';
+
+col FUZZY format a10
+select fuzzy, count(*) from v$datafile_header group by fuzzy;
+
+
+Registrar archives vindo via RESTORE no IBMSAP33:
+=================================================================================
+alter database register logfile '/oracle/PRD/saparch/PRDarch1_589066.dbf';
+
+
+Desativar/Ativar geração no IBMSAP33 (rodar no IBMSAP04:
+=================================================================================
+alter system set log_archive_Dest_state_3=defer scope=both;
+alter system set log_archive_Dest_state_3=enable scope=both;
+
+
